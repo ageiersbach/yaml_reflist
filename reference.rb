@@ -7,7 +7,13 @@ class Reference
   end
   
   def new(name, options)
-    @refs['references'][name] = options unless @refs.accounts[name]
+    options.each do |o|
+      keys = o.keys
+      vals = o.values
+      @refs['references']["#{name}"]["#{keys[0]}"] = vals[0]
+    end
+    #@refs['references']['#{name}'] = opts
+    #@refs['references']["#{name}"] = options.to_yaml
   end
 
   # what difs betw. editing & creating refs do i need to think about?
@@ -26,14 +32,28 @@ class Reference
     puts "No results matched #{name}" 
   end
 
+  def write(ref_file)
+    File.open('reference.yml', 'w') { |f| f.write ref_file }
+  end
 
-  def test
-    @refs['references'].each {|k,v| 
-      puts "value of #{k} is #{v}"    
-    }
+
+  def test(name)
+    opts = Hash.new
+    puts "type 'quit' to end dialog"
+    print " > "
+    key = gets.chomp
+    until key=="quit"
+      print " : "
+      value = gets.chomp
+      opts[key] = value
+      puts 
+      print " > "
+      key = gets.chomp
+    end
+    yaml_stuff = Hash.new(name)
+    yaml_stuff[name] = opts
+    puts yaml_stuff.to_yaml
   end
 
 end
 
-test = Reference.new
-test.find("another_accout_name")
