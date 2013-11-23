@@ -6,22 +6,60 @@ class Reference
   def initialize
     @refs = YAML.load_file('reference.yaml')
   end
+
+  def delete(name)
+    if @refs.key?(name)
+      stor = YAML::Store.new('reference.yaml')
+      stor.transaction do
+        stor.delete(name)
+      end
+    else
+      puts "could not delete #{name} -- does not exist."
+    end
+  end
   
-  def new(name, options)
+  def new(name)
+    
     stor = YAML::Store.new('reference.yaml')
     stor.transaction do
       if stor[name]
-        #have thor handle this exception?
-        #return stor[name]
+        puts "#{name} already exists." 
+        print "edit? (y/n) "
+        response = gets.chomp
+        if response=='y'
+          edit
+        end
       else
+        options = get_options
         stor[name] = options
+        puts "created #{name}"
       end
     end
   end
 
+  def get_options
+
+    options = []
+    puts "Enter 'quit' for key to Finish"
+    print " > "
+    key = gets.chomp
+    until key=="quit"
+      print " (val) : "
+      value = gets.chomp
+      puts
+      hash = Hash.new
+      hash[key] = value.to_s
+      options << hash
+      print " (key) > "
+      key = gets.chomp
+    end
+    return options
+  end
+
   # what difs betw. editing & creating refs do i need to think about?
-  def edit(name, options)
-    @refs.accounts[name] = options
+  def edit
+    puts "Enter new name or type 'e' to edit existing"
+
   end
 
   def find(name)
