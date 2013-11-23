@@ -1,4 +1,5 @@
 require 'yaml'
+require 'yaml/store'
 
 class Reference
   
@@ -7,13 +8,15 @@ class Reference
   end
   
   def new(name, options)
-    options.each do |o|
-      keys = o.keys
-      vals = o.values
-      @refs['references']["#{name}"]["#{keys[0]}"] = vals[0]
+    stor = YAML::Store.new('reference.yaml')
+    stor.transaction do
+      if stor[name]
+        #have thor handle this exception?
+        #return stor[name]
+      else
+        stor[name] = options
+      end
     end
-    #@refs['references']['#{name}'] = opts
-    #@refs['references']["#{name}"] = options.to_yaml
   end
 
   # what difs betw. editing & creating refs do i need to think about?
@@ -23,13 +26,11 @@ class Reference
 
   def find(name)
     puts "looking for: #{name}"
-    @refs['references'].each_with_index do |ref_hash, index|
-      if ref_hash.key?(name)
-        puts ref_hash[name].to_yaml
-        return
-      end
-    end  
-    puts "No results matched #{name}" 
+    if @refs.key?(name)
+      puts @refs.to_yaml
+    else
+      puts "No results matched #{name}" 
+    end
   end
 
   def write(ref_file)

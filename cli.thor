@@ -15,13 +15,13 @@ class CLI < Thor
     ref = Reference.new
     opts = []
     
-    say("need to call Reference.new with #{name}", :bold)
+    say("Enter 'quit' for key to Finish", :bold)
     
     key = ask(" (key) > ")
     until key=="quit"
       value = ask(" (val) : ")
       hash = Hash.new
-      hash[key] = value
+      hash[key] = value.to_s
       opts << hash
      # puts opts
       key = ask(" (key) > ")
