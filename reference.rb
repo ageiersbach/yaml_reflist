@@ -3,13 +3,14 @@ require 'yaml/store'
 
 class Reference
   
-  def initialize
-    @refs = YAML.load_file('reference.yaml')
+  def initialize(file)
+    @file = file
+    @refs = YAML.load_file(@file)
   end
 
   def delete(name)
     if @refs.key?(name)
-      stor = YAML::Store.new('reference.yaml')
+      stor = YAML::Store.new(@file)
       stor.transaction do
         stor.delete(name)
       end
@@ -19,8 +20,7 @@ class Reference
   end
   
   def new(name)
-    
-    stor = YAML::Store.new('reference.yaml')
+    stor = YAML::Store.new(@file)
     stor.transaction do
       if stor[name]
         puts "#{name} already exists." 
@@ -56,42 +56,17 @@ class Reference
     return options
   end
 
-  # what difs betw. editing & creating refs do i need to think about?
   def edit
     puts "Enter new name or type 'e' to edit existing"
-
   end
 
   def find(name)
     puts "looking for: #{name}"
     if @refs.key?(name)
-      puts @refs.to_yaml
+      puts @refs[name].to_yaml
     else
       puts "No results matched #{name}" 
     end
-  end
-
-  def write(ref_file)
-    File.open('reference.yml', 'w') { |f| f.write ref_file }
-  end
-
-
-  def test(name)
-    opts = Hash.new
-    puts "type 'quit' to end dialog"
-    print " > "
-    key = gets.chomp
-    until key=="quit"
-      print " : "
-      value = gets.chomp
-      opts[key] = value
-      puts 
-      print " > "
-      key = gets.chomp
-    end
-    yaml_stuff = Hash.new(name)
-    yaml_stuff[name] = opts
-    puts yaml_stuff.to_yaml
   end
 
 end

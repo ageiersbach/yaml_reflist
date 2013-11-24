@@ -2,12 +2,16 @@ require 'trollop'
 require './reference.rb'
 
 opts = Trollop::options do
+  opt :path, "file path", :type => String
   opt :new, "create new ref", :type => String
   opt :find, "find ref", :type=> String
   opt :delete, "delete ref", :type => String
 end
-
-ref = Reference.new
+if opts[:path]
+  ref = Reference.new(opts[:path])
+else
+  ref = Reference.new('reference.yaml')
+end
 if opts[:new]
   ref.new(opts[:new])
 elsif opts[:find]
