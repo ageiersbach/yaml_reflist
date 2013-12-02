@@ -62,10 +62,18 @@ class Reference
 
   def find(name)
     puts "looking for: #{name}"
-    if @refs.key?(name)
-      puts @refs[name].to_yaml
-    else
-      puts "No results matched #{name}" 
+    
+    found_entry = false
+    @refs.keys.each do |key|
+      if key.include? name
+        puts
+        puts "#{key}"
+        puts @refs[key].to_yaml
+        found_entry = true;
+      end
+    end
+    if found_entry==false
+      puts "No entries found for #{name}"
     end
   end
 

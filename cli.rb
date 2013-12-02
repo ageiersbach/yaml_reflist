@@ -1,5 +1,5 @@
 require 'trollop'
-require './reference.rb'
+require_relative 'reference'
 
 opts = Trollop::options do
   opt :path, "file path", :type => String
