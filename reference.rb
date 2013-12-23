@@ -61,11 +61,17 @@ class Reference
   end
 
   def find(name)
-    puts "looking for: #{name}"
+    if name
+      puts "looking for: #{name}"
+    else
+      puts "If you are looking for a specific entry, please try entering it
+      again." 
+      list
+    end
     
     found_entry = false
     @refs.keys.each do |key|
-      if key.include? name
+      if key.downcase.include? name.downcase
         puts
         puts "#{key}"
         puts @refs[key].to_yaml
@@ -74,6 +80,15 @@ class Reference
     end
     if found_entry==false
       puts "No entries found for #{name}"
+    end
+  end
+
+  def list
+    puts "Listing entries for #{@file}"
+    list = @refs.keys
+    list.sort_by!{|a| a.downcase }
+    list.each do |item|
+      puts " - #{item}"
     end
   end
 
